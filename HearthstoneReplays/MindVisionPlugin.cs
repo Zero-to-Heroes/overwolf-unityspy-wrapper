@@ -71,6 +71,11 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => mindVision?.GetBattlegroundsInfo(), "getBattlegroundsInfo", callback);
         }
 
+        public void getArenaInfo(Action<object> callback)
+        {
+            callUnitySpy(() => mindVision?.GetArenaInfo(), "getArenaInfo", callback);
+        }
+
         private void callUnitySpy(Func<object> action, string service, Action<object> callback, int retriesLeft = 20)
         {
             Task.Run(() =>
