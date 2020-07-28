@@ -76,21 +76,22 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => mindVision?.GetArenaInfo(), "getArenaInfo", callback);
         }
 
-        private void callUnitySpy(Func<object> action, string service, Action<object> callback, int retriesLeft = 20)
+        private void callUnitySpy(Func<object> action, string service, Action<object> callback, int retriesLeft = 2)
         {
             Task.Run(() =>
             {
                 //Logger.Log("Calling unityspy 1", callback);
                 try
                 {
-                    //Logger.Log = onGlobalEvent;
+                    Logger.Log = onGlobalEvent;
                     //Logger.Log("Calling unityspy 2", service);
+                    //Logger.Log("mindvision", mindVision);
 
                     if (callback == null)
                     {
                         Logger.Log("No callback, returning", service);
                         return;
-                    }
+                    } 
 
                     if (retriesLeft <= 0)
                     {
@@ -99,7 +100,7 @@ namespace OverwolfUnitySpy
                         return;
                     }
                     object result = action != null ? action() : null;
-                    //Logger.Log("Ready to serialize", service);
+                    //Logger.Log("result " + service, result);
                     string serializedResult = result != null ? JsonConvert.SerializeObject(result) : null;
                     //Logger.Log("Serialized ", service);
                     callback(serializedResult);
@@ -112,6 +113,7 @@ namespace OverwolfUnitySpy
                     {
                         this._mindVision = null;
                     }
+                    //callUnitySpy(action, service, callback, retriesLeft - 1);
                     callback(null);
                     return;
                 }
