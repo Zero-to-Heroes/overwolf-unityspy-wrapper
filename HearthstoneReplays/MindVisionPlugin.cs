@@ -86,6 +86,20 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => mindVision?.GetSceneMode(), "getCurrentScene", callback);
         }
 
+        public void isRunning(Action<object> callback)
+        {
+            callUnitySpy(() => mindVision?.IsRunning(), "isRunning", callback);
+        }
+
+        public void reset(Action<object> callback)
+        {
+            lock (mindvisionLock)
+            {
+                this._mindVision = null;
+            }
+            isRunning(callback);
+        }
+
         private void callUnitySpy(Func<object> action, string service, Action<object> callback, bool resetMindvision = false, bool debug = false, int retriesLeft = 2)
         {
             Task.Run(() =>
