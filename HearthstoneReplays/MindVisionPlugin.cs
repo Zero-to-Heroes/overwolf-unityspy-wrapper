@@ -66,9 +66,9 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => mindVision?.GetActiveDeck(), "getAciveDeck", callback);
         }
 
-        public void getBattlegroundsInfo(Action<object> callback)
+        public void getBattlegroundsInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetBattlegroundsInfo(), "getBattlegroundsInfo", callback);
+            callUnitySpy(() => mindVision?.GetBattlegroundsInfo(), "getBattlegroundsInfo", callback, resetMindvision);
         }
 
         public void getArenaInfo(Action<object> callback)
@@ -76,7 +76,17 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => mindVision?.GetArenaInfo(), "getArenaInfo", callback);
         }
 
-        private void callUnitySpy(Func<object> action, string service, Action<object> callback, int retriesLeft = 2)
+        public void getDuelsInfo(bool resetMindvision, Action<object> callback)
+        {
+            callUnitySpy(() => mindVision?.GetDuelsInfo(), "getDuelsInfo", callback, resetMindvision, true);
+        }
+
+        public void getCurrentScene(Action<object> callback)
+        {
+            callUnitySpy(() => mindVision?.GetSceneMode(), "getCurrentScene", callback);
+        }
+
+        private void callUnitySpy(Func<object> action, string service, Action<object> callback, bool resetMindvision = false, bool debug = false, int retriesLeft = 2)
         {
             Task.Run(() =>
             {
@@ -84,14 +94,24 @@ namespace OverwolfUnitySpy
                 try
                 {
                     Logger.Log = onGlobalEvent;
-                    //Logger.Log("Calling unityspy 2", service);
-                    //Logger.Log("mindvision", mindVision);
+                    if (resetMindvision)
+                    {
+                        lock (mindvisionLock)
+                        {
+                            this._mindVision = null;
+                        }
+                        Logger.Log("Reset mindvision", service);
+                    }
+                    if (debug)
+                    {
+                        Logger.Log("Calling unityspy 2", service);
+                    }
 
                     if (callback == null)
                     {
                         Logger.Log("No callback, returning", service);
                         return;
-                    } 
+                    }
 
                     if (retriesLeft <= 0)
                     {
@@ -100,9 +120,15 @@ namespace OverwolfUnitySpy
                         return;
                     }
                     object result = action != null ? action() : null;
-                    //Logger.Log("result " + service, result);
+                    if (debug)
+                    {
+                        Logger.Log("result " + service, result);
+                    }
                     string serializedResult = result != null ? JsonConvert.SerializeObject(result) : null;
-                    //Logger.Log("Serialized ", service);
+                    if (debug)
+                    {
+                        Logger.Log("Serialized ", service);
+                    }
                     callback(serializedResult);
                 }
                 catch (Exception e)
