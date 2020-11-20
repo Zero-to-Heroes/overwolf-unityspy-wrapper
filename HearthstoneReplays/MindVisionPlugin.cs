@@ -81,6 +81,16 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => mindVision?.GetDuelsInfo(), "getDuelsInfo", callback, resetMindvision, true);
         }
 
+        public void getRewardsTrackInfo(Action<object> callback)
+        {
+            callUnitySpy(() => mindVision?.GetRewardTrackInfo(), "getRewardsTrackInfo", callback);
+        }
+
+        public void getDuelsRewardsInfo(bool resetMindvision, Action<object> callback)
+        {
+            callUnitySpy(() => mindVision?.GetDuelsRewardsInfo(), "getDuelsRewardsInfo", callback, resetMindvision, true);
+        }
+
         public void getCurrentScene(Action<object> callback)
         {
             callUnitySpy(() => mindVision?.GetSceneMode(), "getCurrentScene", callback);
@@ -118,7 +128,7 @@ namespace OverwolfUnitySpy
                     }
                     if (debug)
                     {
-                        Logger.Log("Calling unityspy 2", service);
+                        //Logger.Log("Calling unityspy 2", service);
                     }
 
                     if (callback == null)
@@ -136,12 +146,12 @@ namespace OverwolfUnitySpy
                     object result = action != null ? action() : null;
                     if (debug)
                     {
-                        Logger.Log("result " + service, result);
+                        //Logger.Log("result " + service, result);
                     }
                     string serializedResult = result != null ? JsonConvert.SerializeObject(result) : null;
                     if (debug)
                     {
-                        Logger.Log("Serialized ", service);
+                        //Logger.Log("Serialized ", service);
                     }
                     callback(serializedResult);
                 }
