@@ -16,11 +16,13 @@ namespace OverwolfUnitySpy
         //  ...
         // });
         public event Action<object, object> onGlobalEvent;
+        public event Action<object> onMemoryUpdate;
 
         private object mindvisionLock = new object();
 
         private MindVision _mindVision;
-        private MindVision mindVision
+
+        private MindVision MindVision
         {
             get
             {
@@ -33,6 +35,7 @@ namespace OverwolfUnitySpy
                             Logger.Log = onGlobalEvent;
                             _mindVision = new MindVision();
                             Logger.Log("MinVision created", "");
+                            onMemoryUpdate("reset");
                         }
                         catch (Exception e)
                         {
@@ -48,66 +51,100 @@ namespace OverwolfUnitySpy
         {
             //Logger.Log = onGlobalEvent;
             //Logger.Log("Ready to get collection", "");
-            callUnitySpy(() => mindVision?.GetCollectionCards(), "getCollection", callback);
+            callUnitySpy(() => MindVision?.GetCollectionCards(), "getCollection", callback);
         }
 
         public void getMatchInfo(Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetMatchInfo(), "getMatchInfo", callback);
+            callUnitySpy(() => MindVision?.GetMatchInfo(), "getMatchInfo", callback);
         }
 
         public void getDungeonInfo(Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetDungeonInfoCollection(), "getDungeonInfo", callback);
+            callUnitySpy(() => MindVision?.GetDungeonInfoCollection(), "getDungeonInfo", callback);
         }
 
         public void getActiveDeck(Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetActiveDeck(), "getAciveDeck", callback);
+            callUnitySpy(() => MindVision?.GetActiveDeck(), "getAciveDeck", callback);
         }
 
         public void getBattlegroundsInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetBattlegroundsInfo(), "getBattlegroundsInfo", callback, resetMindvision);
+            callUnitySpy(() => MindVision?.GetBattlegroundsInfo(), "getBattlegroundsInfo", callback, resetMindvision);
         }
 
         public void getArenaInfo(Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetArenaInfo(), "getArenaInfo", callback);
+            callUnitySpy(() => MindVision?.GetArenaInfo(), "getArenaInfo", callback);
         }
 
         public void getDuelsInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetDuelsInfo(), "getDuelsInfo", callback, resetMindvision, true);
+            callUnitySpy(() => MindVision?.GetDuelsInfo(), "getDuelsInfo", callback, resetMindvision, true);
         }
 
         public void getRewardsTrackInfo(Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetRewardTrackInfo(), "getRewardsTrackInfo", callback);
+            callUnitySpy(() => MindVision?.GetRewardTrackInfo(), "getRewardsTrackInfo", callback);
         }
 
         public void getDuelsRewardsInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetDuelsRewardsInfo(), "getDuelsRewardsInfo", callback, resetMindvision, true);
+            callUnitySpy(() => MindVision?.GetDuelsRewardsInfo(), "getDuelsRewardsInfo", callback, resetMindvision, true);
+        }
+
+        public void getAchievementsInfo(bool resetMindvision, Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetAchievementsInfo(), "getAchievementsInfo", callback, resetMindvision, true);
+        }
+
+        public void getInGameAchievementsProgressInfo(bool resetMindvision, Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetInGameAchievementsProgressInfo(), "getInGameAchievementsProgressInfo", callback, resetMindvision, true);
         }
 
         public void getCurrentScene(Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.GetSceneMode(), "getCurrentScene", callback);
+            callUnitySpy(() => MindVision?.GetSceneMode(), "getCurrentScene", callback);
+        }
+
+        public void listenForUpdates(Action<object> callback)
+        {
+            Task.Run(() =>
+            {
+                MindVision?.ListenForChanges(500, (changes) =>
+                {
+                    string serializedResult = changes != null ? JsonConvert.SerializeObject(changes) : null;
+                    onMemoryUpdate(changes);
+                });
+            });
+        }
+
+        public void stopListenForUpdates()
+        {
+            Task.Run(() =>
+            {
+                MindVision?.StopListening();
+            });
         }
 
         public void isRunning(Action<object> callback)
         {
-            callUnitySpy(() => mindVision?.IsRunning(), "isRunning", callback);
+            callUnitySpy(() => MindVision?.IsRunning(), "isRunning", callback);
         }
 
         public void reset(Action<object> callback)
         {
             lock (mindvisionLock)
             {
+                this.MindVision?.StopListening();
                 this._mindVision = null;
             }
-            isRunning(callback);
+            if (callback != null)
+            {
+                isRunning(callback);
+            }
         }
 
         private void callUnitySpy(Func<object> action, string service, Action<object> callback, bool resetMindvision = false, bool debug = false, int retriesLeft = 2)
@@ -122,7 +159,7 @@ namespace OverwolfUnitySpy
                     {
                         lock (mindvisionLock)
                         {
-                            this._mindVision = null;
+                            reset(null);
                         }
                         Logger.Log("Reset mindvision", service);
                     }
@@ -161,7 +198,7 @@ namespace OverwolfUnitySpy
                     // Reinit the plugin
                     lock (mindvisionLock)
                     {
-                        this._mindVision = null;
+                        reset(null);
                     }
                     //callUnitySpy(action, service, callback, retriesLeft - 1);
                     callback(null);
