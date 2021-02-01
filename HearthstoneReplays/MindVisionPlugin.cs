@@ -19,8 +19,10 @@ namespace OverwolfUnitySpy
         public event Action<object> onMemoryUpdate;
 
         private object mindvisionLock = new object();
-
         private MindVision _mindVision;
+
+        private object mindvisionListenerLock = new object();
+        private MindVision _mindVisionListener;
 
         private MindVision MindVision
         {
@@ -35,7 +37,11 @@ namespace OverwolfUnitySpy
                             Logger.Log = onGlobalEvent;
                             _mindVision = new MindVision();
                             Logger.Log("MinVision created", "");
-                            onMemoryUpdate("reset");
+                            //if (onMemoryUpdate != null)
+                            //{
+                            //    //Logger.Log("Resetting memory updates", "");
+                            //    onMemoryUpdate("reset");
+                            //}
                         }
                         catch (Exception e)
                         {
@@ -44,6 +50,36 @@ namespace OverwolfUnitySpy
                     }
                 }
                 return _mindVision;
+            }
+        }
+
+        private MindVision MindVisionListener
+        {
+            get
+            {
+                lock (mindvisionListenerLock)
+                {
+                    if (_mindVisionListener == null)
+                    {
+                        try
+                        {
+                            Logger.Log = onGlobalEvent;
+                            _mindVisionListener = new MindVision();
+                            Logger.Log("MinVision Listener created", "");
+                            // Don't send a reset event here, as it might not be a reset. Do it explicitly instead
+                            //if (onMemoryUpdate != null)
+                            //{
+                            //    //Logger.Log("Resetting memory updates", "");
+                            //    onMemoryUpdate("reset");
+                            //}
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Log("Could not instantiate MindVision Listener: " + e.Message, e.StackTrace);
+                        }
+                    }
+                }
+                return _mindVisionListener;
             }
         }
 
@@ -109,15 +145,22 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetSceneMode(), "getCurrentScene", callback);
         }
 
+        public void isMaybeOnDuelsRewardsScreen(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.IsMaybeOnDuelsRewardsScreen(), "isMaybeOnDuelsRewardsScreen", callback);
+        }
+
         public void listenForUpdates(Action<object> callback)
         {
             Task.Run(() =>
             {
-                MindVision?.ListenForChanges(500, (changes) =>
+                MindVisionListener?.ListenForChanges(500, (changes) =>
                 {
                     string serializedResult = changes != null ? JsonConvert.SerializeObject(changes) : null;
                     onMemoryUpdate(changes);
                 });
+                Logger.Log("activated listenForUpdates", "");
+                callback("ok");
             });
         }
 
@@ -125,7 +168,7 @@ namespace OverwolfUnitySpy
         {
             Task.Run(() =>
             {
-                MindVision?.StopListening();
+                MindVisionListener?.StopListening();
             });
         }
 
@@ -136,14 +179,27 @@ namespace OverwolfUnitySpy
 
         public void reset(Action<object> callback)
         {
-            lock (mindvisionLock)
+            if (this._mindVision != null)
             {
-                this.MindVision?.StopListening();
                 this._mindVision = null;
+            }
+            if (this._mindVisionListener != null)
+            {
+                this._mindVisionListener.StopListening();
+                Logger.Log("Resetting memory updates", "");
+                this.onMemoryUpdate("reset");
             }
             if (callback != null)
             {
                 isRunning(callback);
+            }
+        }
+
+        public void resetMain()
+        {
+            if (this._mindVision != null)
+            {
+                this._mindVision = null;
             }
         }
 
@@ -157,10 +213,7 @@ namespace OverwolfUnitySpy
                     Logger.Log = onGlobalEvent;
                     if (resetMindvision)
                     {
-                        lock (mindvisionLock)
-                        {
-                            reset(null);
-                        }
+                        resetMain();
                         Logger.Log("Reset mindvision", service);
                     }
                     if (debug)
@@ -196,10 +249,7 @@ namespace OverwolfUnitySpy
                 {
                     Logger.Log("Raised when rertieving " + service + ", resetting MindVision: " + e.Message, e.StackTrace);
                     // Reinit the plugin
-                    lock (mindvisionLock)
-                    {
-                        reset(null);
-                    }
+                    resetMain();
                     //callUnitySpy(action, service, callback, retriesLeft - 1);
                     callback(null);
                     return;
