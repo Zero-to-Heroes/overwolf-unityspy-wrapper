@@ -90,6 +90,20 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetCollectionCards(), "getCollection", callback);
         }
 
+        public void getCardBacks(Action<object> callback)
+        {
+            //Logger.Log = onGlobalEvent;
+            //Logger.Log("Ready to get collection", "");
+            callUnitySpy(() => MindVision?.GetCollectionCardBacks(), "getCardBacks", callback);
+        }
+
+        public void getCoins(Action<object> callback)
+        {
+            //Logger.Log = onGlobalEvent;
+            //Logger.Log("Ready to get collection", "");
+            callUnitySpy(() => MindVision?.GetCollectionCoins(), "getCoins", callback);
+        }
+
         public void getMatchInfo(Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetMatchInfo(), "getMatchInfo", callback);
@@ -145,6 +159,16 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetSceneMode(), "getCurrentScene", callback);
         }
 
+        public void getBoostersInfo(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetBoostersInfo(), "getBoostersInfo", callback);
+        }
+
+        public void getMemoryChanges(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetMemoryChanges(), "getMemoryChanges", callback);
+        }
+
         public void isMaybeOnDuelsRewardsScreen(Action<object> callback)
         {
             callUnitySpy(() => MindVision?.IsMaybeOnDuelsRewardsScreen(), "isMaybeOnDuelsRewardsScreen", callback);
@@ -154,10 +178,12 @@ namespace OverwolfUnitySpy
         {
             Task.Run(() =>
             {
+                Logger.Log("Starting to listen for updates", "");
                 MindVisionListener?.ListenForChanges(500, (changes) =>
                 {
                     string serializedResult = changes != null ? JsonConvert.SerializeObject(changes) : null;
-                    onMemoryUpdate(changes);
+                    //Logger.Log("Memory changes", serializedResult);
+                    onMemoryUpdate(serializedResult);
                 });
                 Logger.Log("activated listenForUpdates", "");
                 callback("ok");
@@ -187,6 +213,7 @@ namespace OverwolfUnitySpy
             {
                 this._mindVisionListener.StopListening();
                 Logger.Log("Resetting memory updates", "");
+                this._mindVisionListener = null;
                 this.onMemoryUpdate("reset");
             }
             if (callback != null)
