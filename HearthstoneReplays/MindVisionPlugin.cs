@@ -114,9 +114,19 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetDungeonInfoCollection(), "getDungeonInfo", callback);
         }
 
-        public void getActiveDeck(Action<object> callback)
+        public void getActiveDeck(long selectedDeckId, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetActiveDeck(), "getAciveDeck", callback);
+            long? finalSelectedDeckId = selectedDeckId;
+            if (finalSelectedDeckId == 0)
+            {
+                finalSelectedDeckId = null;
+            }
+            callUnitySpy(() => MindVision?.GetActiveDeck(finalSelectedDeckId), "getActiveDeck", callback);
+        }
+
+        public void getWhizbangDeck(long deckId, Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetWhizbangDeck(deckId), "getWhizbangDeck", callback);
         }
 
         public void getBattlegroundsInfo(bool resetMindvision, Action<object> callback)
@@ -179,14 +189,25 @@ namespace OverwolfUnitySpy
             Task.Run(() =>
             {
                 Logger.Log("Starting to listen for updates", "");
-                MindVisionListener?.ListenForChanges(500, (changes) =>
+                var listener = MindVisionListener;
+                if (listener == null)
                 {
-                    string serializedResult = changes != null ? JsonConvert.SerializeObject(changes) : null;
-                    //Logger.Log("Memory changes", serializedResult);
-                    onMemoryUpdate(serializedResult);
-                });
-                Logger.Log("activated listenForUpdates", "");
-                callback("ok");
+                    Task.Delay(100);
+                    listenForUpdates(callback);
+                    return;
+                }
+                else
+                {
+                    listener.ListenForChanges(500, (changes) =>
+                    {
+                        string serializedResult = changes != null ? JsonConvert.SerializeObject(changes) : null;
+                        //Logger.Log("Memory changes", serializedResult); 
+                        onMemoryUpdate(serializedResult);
+                    });
+                    Logger.Log("activated listenForUpdates", "");
+                    callback("ok");
+
+                }
             });
         }
 
@@ -218,7 +239,21 @@ namespace OverwolfUnitySpy
             }
             if (callback != null)
             {
-                isRunning(callback);
+                callback("reset done");
+            }
+        }
+        
+        public void resetListening(Action<object> callback)
+        {
+            if (this._mindVisionListener != null)
+            {
+                this._mindVisionListener.StopListening();
+                Logger.Log("Resetting memory updates", "");
+                this._mindVisionListener = null;
+            }
+            if (callback != null)
+            {
+                callback("resetListening done");
             }
         }
 
