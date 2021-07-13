@@ -105,11 +105,13 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnitySpy">
-      <HintPath>..\..\forks\unityspy-2\UnitySpy.HearthstoneLib\bin\x64\Release\UnitySpy.dll</HintPath>
+    <Reference Include="UnitySpy, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\forks\unityspy-2\UnitySpy.HearthstoneLib\bin\x64\Debug\UnitySpy.dll</HintPath>
     </Reference>
-    <Reference Include="UnitySpy.HearthstoneLib">
-      <HintPath>..\..\forks\unityspy-2\UnitySpy.HearthstoneLib\bin\x64\Release\UnitySpy.HearthstoneLib.dll</HintPath>
+    <Reference Include="UnitySpy.HearthstoneLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\forks\unityspy-2\UnitySpy.HearthstoneLib\bin\x64\Debug\UnitySpy.HearthstoneLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

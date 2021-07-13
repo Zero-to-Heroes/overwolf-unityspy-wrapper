@@ -36,6 +36,7 @@ namespace OverwolfUnitySpy
                         {
                             Logger.Log = onGlobalEvent;
                             _mindVision = new MindVision();
+                            _mindVision.MessageReceived += _mindVisionListener_MessageReceived;
                             Logger.Log("MinVision created", "");
                             //if (onMemoryUpdate != null)
                             //{
@@ -65,6 +66,7 @@ namespace OverwolfUnitySpy
                         {
                             Logger.Log = onGlobalEvent;
                             _mindVisionListener = new MindVision();
+                            _mindVisionListener.MessageReceived += _mindVision_MessageReceived;
                             Logger.Log("MinVision Listener created", "");
                             // Don't send a reset event here, as it might not be a reset. Do it explicitly instead
                             //if (onMemoryUpdate != null)
@@ -81,6 +83,16 @@ namespace OverwolfUnitySpy
                 }
                 return _mindVisionListener;
             }
+        }
+
+        private void _mindVisionListener_MessageReceived(object sender, dynamic e)
+        {
+            Logger.Log("MindVision Listener log", e?.Message);
+        }
+
+        private void _mindVision_MessageReceived(object sender, dynamic e)
+        {
+            Logger.Log("MindVision log", e?.Message);
         }
 
         public void getCollection(Action<object> callback)
@@ -186,13 +198,13 @@ namespace OverwolfUnitySpy
 
         public void listenForUpdates(Action<object> callback)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 Logger.Log("Starting to listen for updates", "");
                 var listener = MindVisionListener;
                 if (listener == null)
                 {
-                    Task.Delay(100);
+                    await Task.Delay(100);
                     listenForUpdates(callback);
                     return;
                 }
