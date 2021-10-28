@@ -78,6 +78,7 @@ namespace OverwolfUnitySpy
                         catch (Exception e)
                         {
                             Logger.Log("Could not instantiate MindVision Listener: " + e.Message, e.StackTrace);
+
                         }
                     }
                 }
@@ -186,6 +187,16 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetBoostersInfo(), "getBoostersInfo", callback);
         }
 
+        public void getMercenariesInfo(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetMercenariesInfo(), "getMercenariesInfo", callback);
+        }
+
+        public void getMercenariesCollectionInfo(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetMercenariesCollectionInfo(), "getMercenariesCollectionInfo", callback);
+        }
+
         public void getMemoryChanges(Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetMemoryChanges(), "getMemoryChanges", callback);
@@ -196,6 +207,9 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.IsMaybeOnDuelsRewardsScreen(), "isMaybeOnDuelsRewardsScreen", callback);
         }
 
+        private int listenRetries = 10;
+        private int listenTimeout = 2000;
+
         public void listenForUpdates(Action<object> callback)
         {
             Task.Run(async () =>
@@ -204,12 +218,20 @@ namespace OverwolfUnitySpy
                 var listener = MindVisionListener;
                 if (listener == null)
                 {
-                    await Task.Delay(100);
+                    if (listenRetries <= 0)
+                    {
+                        Logger.Log("Retried too many times, increasing timeout", "");
+                        listenTimeout = 10000;
+                    }
+                    listenRetries--;
+                    await Task.Delay(listenTimeout);
                     listenForUpdates(callback);
                     return;
                 }
                 else
                 {
+                    listenRetries = 10;
+                    listenTimeout = 2000;
                     listener.ListenForChanges(500, (changes) =>
                     {
                         string serializedResult = changes != null ? JsonConvert.SerializeObject(changes) : null;
@@ -254,7 +276,7 @@ namespace OverwolfUnitySpy
                 callback("reset done");
             }
         }
-        
+
         public void resetListening(Action<object> callback)
         {
             if (this._mindVisionListener != null)
