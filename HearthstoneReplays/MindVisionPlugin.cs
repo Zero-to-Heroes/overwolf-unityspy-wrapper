@@ -24,6 +24,9 @@ namespace OverwolfUnitySpy
         private object mindvisionListenerLock = new object();
         private MindVision _mindVisionListener;
 
+        private int instantiationFailures = 0;
+        private int nextNotifThreshold = 5;
+
         private MindVision MindVision
         {
             get
@@ -38,6 +41,7 @@ namespace OverwolfUnitySpy
                             _mindVision = new MindVision();
                             _mindVision.MessageReceived += _mindVisionListener_MessageReceived;
                             Logger.Log("MinVision created", "");
+                            instantiationFailures = 0;
                             //if (onMemoryUpdate != null)
                             //{
                             //    //Logger.Log("Resetting memory updates", "");
@@ -47,6 +51,13 @@ namespace OverwolfUnitySpy
                         catch (Exception e)
                         {
                             Logger.Log("Could not instantiate MindVision: " + e.Message, e.StackTrace);
+                            instantiationFailures++;
+                            if (instantiationFailures >= nextNotifThreshold)
+                            {
+                                Logger.Log("mindvision-instantiate-error", e.Message);
+                                instantiationFailures = 0;
+                                nextNotifThreshold *= 2;
+                            }
                         }
                     }
                 }
@@ -101,6 +112,13 @@ namespace OverwolfUnitySpy
             //Logger.Log = onGlobalEvent;
             //Logger.Log("Ready to get collection", "");
             callUnitySpy(() => MindVision?.GetCollectionCards(), "getCollection", callback);
+        }
+
+        public void getBattlegroundsOwnedHeroSkinDbfIds(Action<object> callback)
+        {
+            //Logger.Log = onGlobalEvent;
+            //Logger.Log("Ready to get collection", "");
+            callUnitySpy(() => MindVision?.GetCollectionBattlegroundsHeroSkins(), "getBattlegroundsOwnedHeroSkinDbfIds", callback);
         }
 
         public void getCardBacks(Action<object> callback)
