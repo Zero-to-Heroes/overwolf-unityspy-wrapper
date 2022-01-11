@@ -145,14 +145,14 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetDungeonInfoCollection(), "getDungeonInfo", callback);
         }
 
-        public void getActiveDeck(long selectedDeckId, Action<object> callback)
+        public void getActiveDeck(long selectedDeckId, bool resetMindvision, Action<object> callback)
         {
             long? finalSelectedDeckId = selectedDeckId;
             if (finalSelectedDeckId == 0)
             {
                 finalSelectedDeckId = null;
             }
-            callUnitySpy(() => MindVision?.GetActiveDeck(finalSelectedDeckId), "getActiveDeck", callback);
+            callUnitySpy(() => MindVision?.GetActiveDeck(finalSelectedDeckId), "getActiveDeck", callback, resetMindvision);
         }
 
         public void getWhizbangDeck(long deckId, Action<object> callback)
@@ -205,14 +205,14 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetBoostersInfo(), "getBoostersInfo", callback);
         }
 
-        public void getMercenariesInfo(Action<object> callback)
+        public void getMercenariesInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetMercenariesInfo(), "getMercenariesInfo", callback);
+            callUnitySpy(() => MindVision?.GetMercenariesInfo(), "getMercenariesInfo", callback, resetMindvision);
         }
 
-        public void getMercenariesCollectionInfo(Action<object> callback)
+        public void getMercenariesCollectionInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetMercenariesCollectionInfo(), "getMercenariesCollectionInfo", callback);
+            callUnitySpy(() => MindVision?.GetMercenariesCollectionInfo(), "getMercenariesCollectionInfo", callback, resetMindvision);
         }
 
         public void getMemoryChanges(Action<object> callback)
@@ -250,7 +250,7 @@ namespace OverwolfUnitySpy
                 {
                     listenRetries = 10;
                     listenTimeout = 2000;
-                    listener.ListenForChanges(500, (changes) =>
+                    listener.ListenForChanges(200, (changes) =>
                     {
                         string serializedResult = changes != null ? JsonConvert.SerializeObject(changes) : null;
                         //Logger.Log("Memory changes", serializedResult); 
@@ -309,6 +309,20 @@ namespace OverwolfUnitySpy
             }
         }
 
+        public void stopListening(Action<object> callback)
+        {
+            if (this._mindVisionListener != null)
+            {
+                this._mindVisionListener.StopListening();
+                Logger.Log("Stopping memory updates", "");
+                this._mindVisionListener = null;
+            }
+            if (callback != null)
+            {
+                callback("stopListening done");
+            }
+        }
+
         public void resetMain()
         {
             if (this._mindVision != null)
@@ -361,9 +375,11 @@ namespace OverwolfUnitySpy
                 }
                 catch (Exception e)
                 {
-                    Logger.Log("Raised when rertieving " + service + ", resetting MindVision: " + e.Message, e.StackTrace);
+                    //Logger.Log("Raised when rertieving " + service + ", resetting MindVision: " + e.Message, e.StackTrace);
+                    // Don't automatically reset, as exceptions can occur when we try to read the memory at the wrong moment
+                    Logger.Log("Raised when rertieving " + service + ": " + e.Message, e.StackTrace);
                     // Reinit the plugin
-                    resetMain();
+                    //resetMain();
                     //callUnitySpy(action, service, callback, retriesLeft - 1);
                     callback(null);
                     return;
