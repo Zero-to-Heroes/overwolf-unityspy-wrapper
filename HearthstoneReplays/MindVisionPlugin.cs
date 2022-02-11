@@ -155,6 +155,11 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetActiveDeck(finalSelectedDeckId), "getActiveDeck", callback, resetMindvision);
         }
 
+        public void getSelectedDeckId(bool resetMindvision, Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetSelectedDeckId(), "getSelectedDeckId", callback, resetMindvision);
+        }
+
         public void getWhizbangDeck(long deckId, Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetWhizbangDeck(deckId), "getWhizbangDeck", callback);
