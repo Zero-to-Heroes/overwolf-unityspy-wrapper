@@ -1,4 +1,5 @@
 ﻿using HackF5.UnitySpy.HearthstoneLib;
+using HackF5.UnitySpy.HearthstoneLib.Detail;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -383,6 +384,11 @@ namespace OverwolfUnitySpy
                     //Logger.Log("Raised when rertieving " + service + ", resetting MindVision: " + e.Message, e.StackTrace);
                     // Don't automatically reset, as exceptions can occur when we try to read the memory at the wrong moment
                     Logger.Log("Raised when rertieving " + service + ": " + e.Message, e.StackTrace);
+                    if (Utils.IsMemoryReadingIssue(e))
+                    {
+                        Logger.Log("Memory reading issue, calling reset", "");
+                        callUnitySpy(action, service, callback, true, debug, retriesLeft);
+                    }
                     // Reinit the plugin
                     //resetMain();
                     //callUnitySpy(action, service, callback, retriesLeft - 1);
