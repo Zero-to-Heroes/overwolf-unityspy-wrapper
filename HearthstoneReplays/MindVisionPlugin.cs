@@ -141,6 +141,16 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetMatchInfo(), "getMatchInfo", callback);
         }
 
+        public void getCurrentBoard(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetBoard(), "getCurrentBoard", callback);
+        }
+
+        public void getAdventuresInfo(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetAdventuresInfo(), "getAdventuresInfo", callback);
+        }
+
         public void getDungeonInfo(Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetDungeonInfoCollection(), "getDungeonInfo", callback);
@@ -154,6 +164,11 @@ namespace OverwolfUnitySpy
                 finalSelectedDeckId = null;
             }
             callUnitySpy(() => MindVision?.GetActiveDeck(finalSelectedDeckId), "getActiveDeck", callback, resetMindvision);
+        }
+
+        public void getDuelsDeck(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetDuelsDeck(), "getDuelsDeck", callback);
         }
 
         public void getSelectedDeckId(bool resetMindvision, Action<object> callback)
@@ -226,10 +241,10 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetMemoryChanges(), "getMemoryChanges", callback);
         }
 
-        public void isMaybeOnDuelsRewardsScreen(Action<object> callback)
-        {
-            callUnitySpy(() => MindVision?.IsMaybeOnDuelsRewardsScreen(), "isMaybeOnDuelsRewardsScreen", callback);
-        }
+        //public void isMaybeOnDuelsRewardsScreen(Action<object> callback)
+        //{
+        //    callUnitySpy(() => MindVision?.IsMaybeOnDuelsRewardsScreen(), "isMaybeOnDuelsRewardsScreen", callback);
+        //}
 
         public void getDuelsHeroOptions(Action<object> callback)
         {
