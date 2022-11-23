@@ -11,19 +11,11 @@ namespace OverwolfUnitySpy
 {
     class MindVisionPlugin
     {
-        // a global event that triggers with two parameters:
-        //
-        // plugin.get().onGlobalEvent.addListener(function(first, second) {
-        //  ...
-        // });
         public event Action<object, object> onGlobalEvent;
         public event Action<object> onMemoryUpdate;
 
         private object mindvisionLock = new object();
         private MindVision _mindVision;
-
-        //private object mindvisionListenerLock = new object();
-        //private MindVision _mindVisionListener;
 
         private int instantiationFailures = 0;
         private int nextNotifThreshold = 5;
@@ -43,11 +35,6 @@ namespace OverwolfUnitySpy
                             _mindVision.MessageReceived += _mindVisionListener_MessageReceived;
                             Logger.Log("MinVision created", "");
                             instantiationFailures = 0;
-                            //if (onMemoryUpdate != null)
-                            //{
-                            //    //Logger.Log("Resetting memory updates", "");
-                            //    onMemoryUpdate("reset");
-                            //}
                         }
                         catch (Exception e)
                         {
@@ -66,38 +53,6 @@ namespace OverwolfUnitySpy
             }
         }
 
-        //private MindVision MindVisionListener
-        //{
-        //    get
-        //    {
-        //        lock (mindvisionListenerLock)
-        //        {
-        //            if (_mindVisionListener == null)
-        //            {
-        //                try
-        //                {
-        //                    Logger.Log = onGlobalEvent;
-        //                    _mindVisionListener = new MindVision();
-        //                    _mindVisionListener.MessageReceived += _mindVision_MessageReceived;
-        //                    Logger.Log("MinVision Listener created", "");
-        //                    // Don't send a reset event here, as it might not be a reset. Do it explicitly instead
-        //                    //if (onMemoryUpdate != null)
-        //                    //{
-        //                    //    //Logger.Log("Resetting memory updates", "");
-        //                    //    onMemoryUpdate("reset");
-        //                    //}
-        //                }
-        //                catch (Exception e)
-        //                {
-        //                    Logger.Log("Could not instantiate MindVision Listener: " + e.Message, e.StackTrace);
-
-        //                }
-        //            }
-        //        }
-        //        return _mindVisionListener;
-        //    }
-        //}
-
         private void _mindVisionListener_MessageReceived(object sender, dynamic e)
         {
             Logger.Log("MindVision Listener log", e?.Message);
@@ -108,31 +63,23 @@ namespace OverwolfUnitySpy
             Logger.Log("MindVision log", e?.Message);
         }
 
-        public void getCollection(Action<object> callback)
+        public void getCollection(bool throwException, Action<object> callback)
         {
-            //Logger.Log = onGlobalEvent;
-            //Logger.Log("Ready to get collection", "");
-            callUnitySpy(() => MindVision?.GetCollectionCards(), "getCollection", callback);
+            callUnitySpy(() => MindVision?.GetCollectionCards(), "getCollection", callback, throwException);
         }
 
         public void getBattlegroundsOwnedHeroSkinDbfIds(Action<object> callback)
         {
-            //Logger.Log = onGlobalEvent;
-            //Logger.Log("Ready to get collection", "");
             callUnitySpy(() => MindVision?.GetCollectionBattlegroundsHeroSkins(), "getBattlegroundsOwnedHeroSkinDbfIds", callback);
         }
 
         public void getCardBacks(Action<object> callback)
         {
-            //Logger.Log = onGlobalEvent;
-            //Logger.Log("Ready to get collection", "");
             callUnitySpy(() => MindVision?.GetCollectionCardBacks(), "getCardBacks", callback);
         }
 
         public void getCoins(Action<object> callback)
         {
-            //Logger.Log = onGlobalEvent;
-            //Logger.Log("Ready to get collection", "");
             callUnitySpy(() => MindVision?.GetCollectionCoins(), "getCoins", callback);
         }
 
@@ -163,7 +110,7 @@ namespace OverwolfUnitySpy
             {
                 finalSelectedDeckId = null;
             }
-            callUnitySpy(() => MindVision?.GetActiveDeck(finalSelectedDeckId), "getActiveDeck", callback, resetMindvision);
+            callUnitySpy(() => MindVision?.GetActiveDeck(finalSelectedDeckId), "getActiveDeck", callback);
         }
 
         public void getDuelsDeck(Action<object> callback)
@@ -173,7 +120,7 @@ namespace OverwolfUnitySpy
 
         public void getSelectedDeckId(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetSelectedDeckId(), "getSelectedDeckId", callback, resetMindvision);
+            callUnitySpy(() => MindVision?.GetSelectedDeckId(), "getSelectedDeckId", callback);
         }
 
         public void getWhizbangDeck(long deckId, Action<object> callback)
@@ -183,7 +130,7 @@ namespace OverwolfUnitySpy
 
         public void getBattlegroundsInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetBattlegroundsInfo(), "getBattlegroundsInfo", callback, resetMindvision);
+            callUnitySpy(() => MindVision?.GetBattlegroundsInfo(), "getBattlegroundsInfo", callback);
         }
 
         public void getArenaInfo(Action<object> callback)
@@ -193,7 +140,7 @@ namespace OverwolfUnitySpy
 
         public void getDuelsInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetDuelsInfo(), "getDuelsInfo", callback, resetMindvision, true);
+            callUnitySpy(() => MindVision?.GetDuelsInfo(), "getDuelsInfo", callback);
         }
 
         public void getRewardsTrackInfo(Action<object> callback)
@@ -203,17 +150,17 @@ namespace OverwolfUnitySpy
 
         public void getDuelsRewardsInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetDuelsRewardsInfo(), "getDuelsRewardsInfo", callback, resetMindvision, true);
+            callUnitySpy(() => MindVision?.GetDuelsRewardsInfo(), "getDuelsRewardsInfo", callback);
         }
 
         public void getAchievementsInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetAchievementsInfo(), "getAchievementsInfo", callback, resetMindvision, true);
+            callUnitySpy(() => MindVision?.GetAchievementsInfo(), "getAchievementsInfo", callback);
         }
 
         public void getInGameAchievementsProgressInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetInGameAchievementsProgressInfo(), "getInGameAchievementsProgressInfo", callback, resetMindvision, true);
+            callUnitySpy(() => MindVision?.GetInGameAchievementsProgressInfo(), "getInGameAchievementsProgressInfo", callback);
         }
 
         public void getCurrentScene(Action<object> callback)
@@ -228,23 +175,18 @@ namespace OverwolfUnitySpy
 
         public void getMercenariesInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetMercenariesInfo(), "getMercenariesInfo", callback, resetMindvision);
+            callUnitySpy(() => MindVision?.GetMercenariesInfo(), "getMercenariesInfo", callback);
         }
 
         public void getMercenariesCollectionInfo(bool resetMindvision, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetMercenariesCollectionInfo(), "getMercenariesCollectionInfo", callback, resetMindvision);
+            callUnitySpy(() => MindVision?.GetMercenariesCollectionInfo(), "getMercenariesCollectionInfo", callback);
         }
 
         public void getMemoryChanges(Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetMemoryChanges(), "getMemoryChanges", callback);
         }
-
-        //public void isMaybeOnDuelsRewardsScreen(Action<object> callback)
-        //{
-        //    callUnitySpy(() => MindVision?.IsMaybeOnDuelsRewardsScreen(), "isMaybeOnDuelsRewardsScreen", callback);
-        //}
 
         public void getDuelsHeroOptions(Action<object> callback)
         {
@@ -259,6 +201,11 @@ namespace OverwolfUnitySpy
         public void getDuelsSignatureTreasureOptions(Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetDuelsSignatureTreasureOptions(), "getDuelsSignatureTreasureOptions", callback);
+        }
+
+        public void getActiveQuests(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetQuests(), "getActiveQuests", callback);
         }
 
         private int listenRetries = 10;
@@ -330,15 +277,7 @@ namespace OverwolfUnitySpy
                         Logger.Log("Could not instantiate MindVision", "");
                     }
                 }
-                //this.onMemoryUpdate("reset");
             }
-            //if (this._mindVisionListener != null)
-            //{
-            //    this._mindVisionListener.StopListening();
-            //    Logger.Log("Resetting memory updates", "");
-            //    this._mindVisionListener = null;
-            //    this.onMemoryUpdate("reset");
-            //}
             if (callback != null)
             {
                 callback("reset done");
@@ -359,23 +298,13 @@ namespace OverwolfUnitySpy
             }
         }
 
-        private void callUnitySpy(Func<object> action, string service, Action<object> callback, bool resetMindvision = false, bool debug = false, int retriesLeft = 2)
+        private void callUnitySpy(Func<object> action, string service, Action<object> callback, bool throwException = false)
         {
             Task.Run(() =>
             {
-                //Logger.Log("Calling unityspy 1", callback);
                 try
                 {
                     Logger.Log = onGlobalEvent;
-                    //if (resetMindvision)
-                    //{
-                    //    reset(null);
-                    //    Logger.Log("Reset mindvision", service);
-                    //}
-                    if (debug)
-                    {
-                        //Logger.Log("Calling unityspy 2", service);
-                    }
 
                     if (callback == null)
                     {
@@ -383,38 +312,26 @@ namespace OverwolfUnitySpy
                         return;
                     }
 
-                    if (retriesLeft <= 0)
-                    {
-                        Logger.Log("Could not manage to complete task", service);
-                        callback(null);
-                        return;
-                    }
                     object result = action != null ? action() : null;
-                    if (debug)
-                    {
-                        //Logger.Log("result " + service, result);
-                    }
                     string serializedResult = result != null ? JsonConvert.SerializeObject(result) : null;
-                    if (debug)
-                    {
-                        //Logger.Log("Serialized ", service);
-                    }
                     callback(serializedResult);
                 }
                 catch (Exception e)
                 {
-                    //Logger.Log("Raised when rertieving " + service + ", resetting MindVision: " + e.Message, e.StackTrace);
                     // Don't automatically reset, as exceptions can occur when we try to read the memory at the wrong moment
                     Logger.Log("Raised when rertieving " + service + ": " + e.Message, e.StackTrace);
+                    // Sometimes we really want to know if there was an exception, so that we can trigger a reset without going
+                    // through the logs handling events
+                    if (throwException)
+                    {
+                        callback("exception");
+                        return;
+                    }
                     if (Utils.IsMemoryReadingIssue(e))
                     {
                         Logger.Log("Memory reading issue, calling reset", "");
                         Logger.Log("reset", "");
-                        //callUnitySpy(action, service, callback, true, debug, retriesLeft);
                     }
-                    // Reinit the plugin
-                    //resetMain();
-                    //callUnitySpy(action, service, callback, retriesLeft - 1);
                     callback(null);
                     return;
                 }
