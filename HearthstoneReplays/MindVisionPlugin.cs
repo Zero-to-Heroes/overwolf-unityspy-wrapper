@@ -197,7 +197,7 @@ namespace OverwolfUnitySpy
         {
             callUnitySpy(() => MindVision?.GetDuelsHeroPowerOptions(), "getDuelsHeroPowerOptions", callback);
         }
-        
+
         public void getDuelsSignatureTreasureOptions(Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetDuelsSignatureTreasureOptions(), "getDuelsSignatureTreasureOptions", callback);
@@ -261,41 +261,47 @@ namespace OverwolfUnitySpy
 
         public void reset(Action<object> callback)
         {
-            if (this._mindVision != null)
+            Task.Run(() =>
             {
-                this._mindVision.StopListening();
-                this._mindVision = null;
-                for (var i = 0; i < 5; i++)
+                if (this._mindVision != null)
                 {
-                    var unused = MindVision;
-                    if (this._mindVision != null)
+                    this._mindVision.StopListening();
+                    this._mindVision = null;
+                    for (var i = 0; i < 5; i++)
                     {
-                        break;
-                    } 
-                    else
-                    {
-                        Logger.Log("Could not instantiate MindVision", "");
+                        var unused = MindVision;
+                        if (this._mindVision != null)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Logger.Log("Could not instantiate MindVision", "");
+                        }
                     }
                 }
-            }
-            if (callback != null)
-            {
-                callback("reset done");
-            }
+                if (callback != null)
+                {
+                    callback("reset done");
+                }
+            });
         }
 
         public void tearDown(Action<object> callback)
         {
-            if (this._mindVision != null)
+            Task.Run(() =>
             {
-                this._mindVision.StopListening();
-                Logger.Log("Stopping memory updates", "");
-                this._mindVision = null;
-            }
-            if (callback != null)
-            {
-                callback("tearDown done");
-            }
+                if (this._mindVision != null)
+                {
+                    this._mindVision.StopListening();
+                    Logger.Log("Stopping memory updates", "");
+                    this._mindVision = null;
+                }
+                if (callback != null)
+                {
+                    callback("tearDown done");
+                }
+            });
         }
 
         private void callUnitySpy(Func<object> action, string service, Action<object> callback, bool throwException = false)
