@@ -118,6 +118,11 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetDuelsDeck(), "getDuelsDeck", callback);
         }
 
+        public void getDuelsDeckFromCollection(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetDuelsDeckFromCollection(), "getDuelsDeckFromCollection", callback);
+        }
+
         public void getSelectedDeckId(bool resetMindvision, Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetSelectedDeckId(), "getSelectedDeckId", callback);
@@ -156,6 +161,11 @@ namespace OverwolfUnitySpy
         public void getAchievementsInfo(bool resetMindvision, Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetAchievementsInfo(), "getAchievementsInfo", callback);
+        }
+
+        public void getAchievementCategories(bool resetMindvision, Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetAchievementCategories(), "getAchievementCategories", callback);
         }
 
         public void getInGameAchievementsProgressInfo(bool resetMindvision, Action<object> callback)
