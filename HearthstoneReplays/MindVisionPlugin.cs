@@ -168,9 +168,14 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetAchievementCategories(), "getAchievementCategories", callback);
         }
 
-        public void getInGameAchievementsProgressInfo(bool resetMindvision, Action<object> callback)
+        public void getInGameAchievementsProgressInfo(int[] achievementIds, Action<object> callback)
         {
-            callUnitySpy(() => MindVision?.GetInGameAchievementsProgressInfo(), "getInGameAchievementsProgressInfo", callback);
+            callUnitySpy(() => MindVision?.GetInGameAchievementsProgressInfo(achievementIds), "getInGameAchievementsProgressInfo", callback);
+        }
+
+        public void getInGameAchievementsProgressInfoByIndex(int[] indexes, Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetInGameAchievementsProgressInfoByIndex(indexes), "getInGameAchievementsProgressInfo", callback);
         }
 
         public void getCurrentScene(Action<object> callback)
@@ -216,6 +221,11 @@ namespace OverwolfUnitySpy
         public void getActiveQuests(Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetQuests(), "getActiveQuests", callback);
+        }
+
+        public void getPlayerProfileInfo(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetPlayerProfileInfo(), "getPlayerProfileInfo", callback);
         }
 
         private int listenRetries = 10;
