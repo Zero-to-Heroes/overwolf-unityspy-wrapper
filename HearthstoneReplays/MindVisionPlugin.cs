@@ -143,6 +143,11 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetArenaInfo(), "getArenaInfo", callback);
         }
 
+        public void getArenaDeck(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetArenaDeck(), "getArenaDeck", callback);
+        }
+
         public void getDuelsInfo(bool resetMindvision, Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetDuelsInfo(), "getDuelsInfo", callback);
@@ -255,7 +260,12 @@ namespace OverwolfUnitySpy
                     listenTimeout = 2000;
                     listener.ListenForChanges(200, (changes) =>
                     {
-                        string serializedResult = changes != null ? JsonConvert.SerializeObject(changes) : null;
+                        string serializedResult = changes != null 
+                            ? JsonConvert.SerializeObject(changes, new JsonSerializerSettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore
+                                }) 
+                            : null;
                         //Logger.Log("Memory changes", serializedResult); 
                         onMemoryUpdate(serializedResult);
                     });
