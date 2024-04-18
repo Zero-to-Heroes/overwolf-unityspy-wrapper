@@ -137,6 +137,11 @@ namespace OverwolfUnitySpy
         {
             callUnitySpy(() => MindVision?.GetBattlegroundsInfo(), "getBattlegroundsInfo", callback);
         }
+        
+        public void getBattlegroundsSelectedMode(bool resetMindvision, Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetBattlegroundsSelectedGameMode(), "getBattlegroundsSelectedMode", callback);
+        }
 
         public void getArenaInfo(Action<object> callback)
         {
