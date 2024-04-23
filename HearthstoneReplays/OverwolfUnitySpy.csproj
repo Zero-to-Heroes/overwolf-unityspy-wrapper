@@ -95,8 +95,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -105,13 +104,11 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnitySpy, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\forks\unityspy-2\UnitySpy.HearthstoneLib\bin\x64\Debug\UnitySpy.dll</HintPath>
+    <Reference Include="UnitySpy">
+      <HintPath>..\..\forks\unity-spy-.net4.5\UnitySpy.HearthstoneLib\bin\x64\Debug\UnitySpy.dll</HintPath>
     </Reference>
-    <Reference Include="UnitySpy.HearthstoneLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\forks\unityspy-2\UnitySpy.HearthstoneLib\bin\x64\Debug\UnitySpy.HearthstoneLib.dll</HintPath>
+    <Reference Include="UnitySpy.HearthstoneLib">
+      <HintPath>..\..\forks\unity-spy-.net4.5\UnitySpy.HearthstoneLib\bin\x64\Debug\UnitySpy.HearthstoneLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

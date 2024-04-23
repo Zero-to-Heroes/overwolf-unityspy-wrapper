@@ -2,9 +2,6 @@
 using HackF5.UnitySpy.HearthstoneLib.Detail;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OverwolfUnitySpy
@@ -231,6 +228,16 @@ namespace OverwolfUnitySpy
         public void getActiveQuests(Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetQuests(), "getActiveQuests", callback);
+        }
+
+        public void getBgsPlayerTeammateBoard(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetBgsPlayerTeammateBoard(), "getBgsPlayerTeammateBoard", callback); 
+        }
+
+        public void getBgsPlayerBoard(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetBgsPlayerBoard(), "getBgsPlayerBoard", callback);
         }
 
         public void getPlayerProfileInfo(Action<object> callback)
