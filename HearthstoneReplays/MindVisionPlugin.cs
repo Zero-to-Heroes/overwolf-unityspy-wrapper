@@ -245,6 +245,11 @@ namespace OverwolfUnitySpy
             callUnitySpy(() => MindVision?.GetPlayerProfileInfo(), "getPlayerProfileInfo", callback);
         }
 
+        public void getGameUniqueId(Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetGameUniqueId(), "getGameUniqueId", callback);
+        }
+
         private int listenRetries = 10;
         private int listenTimeout = 2000;
 
