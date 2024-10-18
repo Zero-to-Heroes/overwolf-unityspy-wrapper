@@ -28,8 +28,8 @@ namespace OverwolfUnitySpy
                         try
                         {
                             Logger.Log = onGlobalEvent;
-                            _mindVision = new MindVision();
-                            _mindVision.MessageReceived += _mindVisionListener_MessageReceived;
+                            _mindVision = new MindVision(_mindVisionListener_MessageReceived);
+                            //_mindVision.MessageReceived += ;
                             Logger.Log("MinVision created", "");
                             instantiationFailures = 0;
                         }
@@ -60,9 +60,19 @@ namespace OverwolfUnitySpy
             Logger.Log("MindVision log", e?.Message);
         }
 
+        public void isBootstrapped(bool throwException, Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.IsBootstrapped(), "isBootstrapped", callback, throwException);
+        }
+
         public void getCollection(bool throwException, Action<object> callback)
         {
             callUnitySpy(() => MindVision?.GetCollectionCards(), "getCollection", callback, throwException);
+        }
+
+        public void getCollectionSize(bool throwException, Action<object> callback)
+        {
+            callUnitySpy(() => MindVision?.GetCollectionSize(), "getCollectionSize", callback, throwException);
         }
 
         public void getBattlegroundsOwnedHeroSkinDbfIds(Action<object> callback)
